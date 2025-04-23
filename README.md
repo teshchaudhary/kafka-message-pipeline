@@ -8,7 +8,7 @@
 Use Confluent's Kafka and Zookeeper images:
 
 ```yaml
-dversion: '3.8'
+version: '3.8'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -60,3 +60,33 @@ docker exec -it <kafka_container_name> kafka-topics \
 
 ---
 
+## Step 3: Create a Producer Script (`producer.py`)
+
+### ✅ Producer Python Script
+Use the `producer.py` script to send messages to the Kafka topic:
+
+
+### 🚀 Run the Producer
+Run the `producer.py` script:
+
+```bash
+python producer.py
+```
+
+> This will send a message to the `demo-topic` on your Kafka broker.
+
+---
+
+## Step 4: Verify the Message
+
+### ✅ Check Messages
+To verify that the message has been sent, you can use the Kafka consumer to read messages from the `demo-topic`:
+
+```bash
+docker exec -it <kafka_container_name> kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic demo-topic \
+  --from-beginning
+```
+
+---
