@@ -39,15 +39,22 @@ docker-compose up -d
 
 ---
 
-## Step 2: Create a Kafka Topic
+## Step 2: Create Kafka Topics
 
-### ✅ Create Topic
+### ✅ Create Topics
 ```bash
 docker exec -it <kafka_container_name> kafka-topics \
   --create \
-  --topic demo-topic \
+  --topic text-topic \
   --bootstrap-server localhost:9092 \
-  --partitions 3 \
+  --partitions 1 \
+  --replication-factor 1
+
+docker exec -it <kafka_container_name> kafka-topics \
+  --create \
+  --topic json-topic \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
   --replication-factor 1
 ```
 
@@ -60,33 +67,34 @@ docker exec -it <kafka_container_name> kafka-topics \
 
 ---
 
-## Step 3: Create a Producer Script (`producer.py`)
-
-### ✅ Producer Python Script
-Use the `producer.py` script to send messages to the Kafka topic:
-
-
-### 🚀 Run the Producer
-Run the `producer.py` script:
+## Step 3: Run Producer Scripts
 
 ```bash
 python producer.py
+python text_producer.py
+python json_producer.py
 ```
-
-> This will send a message to the `demo-topic` on your Kafka broker.
 
 ---
 
-## Step 4: Verify the Message
+## Step 4: Consume Messages
 
-### ✅ Check Messages
-To verify that the message has been sent, you can use the Kafka consumer to read messages from the `demo-topic`:
 
+### ✅ From `text-topic`
 ```bash
 docker exec -it <kafka_container_name> kafka-console-consumer \
   --bootstrap-server localhost:9092 \
-  --topic demo-topic \
+  --topic text-topic \
+  --from-beginning
+```
+
+### ✅ From `json-topic`
+```bash
+docker exec -it <kafka_container_name> kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic json-topic \
   --from-beginning
 ```
 
 ---
+
