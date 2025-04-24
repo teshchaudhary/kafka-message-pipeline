@@ -41,7 +41,7 @@ docker-compose up -d
 
 ## Step 2: Create Kafka Topics
 
-### ✅ Create Topics
+### ✅ Create `text-topic`
 ```bash
 docker exec -it <kafka_container_name> kafka-topics \
   --create \
@@ -49,7 +49,10 @@ docker exec -it <kafka_container_name> kafka-topics \
   --bootstrap-server localhost:9092 \
   --partitions 1 \
   --replication-factor 1
+```
 
+### ✅ Create `json-topic`
+```bash
 docker exec -it <kafka_container_name> kafka-topics \
   --create \
   --topic json-topic \
@@ -67,34 +70,67 @@ docker exec -it <kafka_container_name> kafka-topics \
 
 ---
 
-## Step 3: Run Producer Scripts
+## Step 3: Change number of partitions for a topic
+
+### Method 1: Alter Partitions (Increase)
+To **increase** the number of partitions for an existing topic:
 
 ```bash
+docker exec -it <kafka_container_name> kafka-topics \
+  --alter \
+  --topic <topic_name> \
+  --bootstrap-server localhost:9092 \
+  --partitions 3
+```
+
+> **Note:** You can only **increase** the number of partitions. **Decreasing** the partition count is **not supported** in Kafka.
+
+### Method 2: Recreate `text-topic` with 3 partitions
+Alternatively, if you prefer to **delete and recreate** the topic:
+
+1. **Delete the `topic`:**
+   ```bash
+   docker exec -it <kafka_container_name> kafka-topics \
+     --delete \
+     --topic <topic_name> \
+     --bootstrap-server localhost:9092
+   ```
+
+2. **Recreate `topic` with 3 partitions:**
+   ```bash
+   docker exec -it <kafka_container_name> kafka-topics \
+     --create \
+     --topic t<topic_name> \
+     --bootstrap-server localhost:9092 \
+     --partitions 3 \
+     --replication-factor 1
+   ```
+
+---
+
+## Step 4: Create Producer Scripts
+
+##### ✅ `text_producer.py`
+
+
+##### ✅ `json_producer.py`
+
+
+### 🚀 Run the Producers
+```bash
 python producer.py
-python text_producer.py
 python json_producer.py
 ```
 
 ---
 
-## Step 4: Consume Messages
+## Step 5: Consume Messages
 
-
-### ✅ From `text-topic`
 ```bash
 docker exec -it <kafka_container_name> kafka-console-consumer \
   --bootstrap-server localhost:9092 \
-  --topic text-topic \
-  --from-beginning
-```
-
-### ✅ From `json-topic`
-```bash
-docker exec -it <kafka_container_name> kafka-console-consumer \
-  --bootstrap-server localhost:9092 \
-  --topic json-topic \
+  --topic <topic_name> \
   --from-beginning
 ```
 
 ---
-

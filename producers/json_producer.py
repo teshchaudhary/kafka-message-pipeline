@@ -10,6 +10,7 @@ producer = KafkaProducer(
 for i in range(100):
     record = {"id": i, "event": f"event-{i}"}
     producer.send('json-topic', record)
+    print(f"Sent !!")
     time.sleep(1)
 
 producer.flush()
