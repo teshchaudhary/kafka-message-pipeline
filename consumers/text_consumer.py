@@ -1,6 +1,5 @@
 from kafka import KafkaConsumer
 
-# Create a Kafka consumer
 consumer = KafkaConsumer(
     'text-topic',
     bootstrap_servers='localhost:9092',
@@ -12,6 +11,5 @@ consumer = KafkaConsumer(
 
 print("🚀 Listening to 'text-topic'...")
 
-# Continuously listen for messages
 for message in consumer:
     print(f"🧾 Received: {message.value}")

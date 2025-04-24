@@ -40,22 +40,10 @@ docker-compose up -d
 ---
 
 ## Step 2: Create Kafka Topics
-
-### ✅ Create `text-topic`
 ```bash
 docker exec -it <kafka_container_name> kafka-topics \
   --create \
-  --topic text-topic \
-  --bootstrap-server localhost:9092 \
-  --partitions 1 \
-  --replication-factor 1
-```
-
-### ✅ Create `json-topic`
-```bash
-docker exec -it <kafka_container_name> kafka-topics \
-  --create \
-  --topic json-topic \
+  --topic <topic_name> \
   --bootstrap-server localhost:9092 \
   --partitions 1 \
   --replication-factor 1
@@ -70,7 +58,7 @@ docker exec -it <kafka_container_name> kafka-topics \
 
 ---
 
-## Step 3: Change number of partitions for a topic
+## Step 3: Change Number of Partitions for a Topic
 
 ### Method 1: Alter Partitions (Increase)
 To **increase** the number of partitions for an existing topic:
@@ -100,7 +88,7 @@ Alternatively, if you prefer to **delete and recreate** the topic:
    ```bash
    docker exec -it <kafka_container_name> kafka-topics \
      --create \
-     --topic t<topic_name> \
+     --topic <topic_name> \
      --bootstrap-server localhost:9092 \
      --partitions 3 \
      --replication-factor 1
@@ -108,17 +96,10 @@ Alternatively, if you prefer to **delete and recreate** the topic:
 
 ---
 
-## Step 4: Create Producer Scripts
+## Step 4: Run Producer Scripts
 
-##### ✅ `text_producer.py`
-
-
-##### ✅ `json_producer.py`
-
-
-### 🚀 Run the Producers
 ```bash
-python producer.py
+python text_producer.py
 python json_producer.py
 ```
 
@@ -126,11 +107,46 @@ python json_producer.py
 
 ## Step 5: Consume Messages
 
+### 🔄 Basic Consumer
 ```bash
 docker exec -it <kafka_container_name> kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic <topic_name> \
   --from-beginning
 ```
+
+### 👥 Consumer Groups (CLI)
+Kafka supports consumer groups to scale out message consumption. Multiple consumers in the same group share the workload:
+
+```bash
+docker exec -it <kafka_container_name> kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic <topic_name> \
+  --group my-consumer-group \
+  --from-beginning
+```
+
+> Each partition in a topic will be consumed by **one consumer** in the group.
+
+---
+
+## ⚙️ Consume Messages with Python
+
+There are two ways to simulate multiple consumers:
+
+1. **Run the same Python consumer script in multiple terminals** — this mimics multiple consumers within a consumer group.
+
+2. **Use a Python script with Kafka's consumer group feature** — the script will automatically coordinate group membership and partition assignment.
+
+-> Python consumer examples are available in the `consumer/` folder:
+- `text_consumer.py`
+- `json_consumer.py`
+
+Make sure to run them with a `group_id` set in the code so they act as members of a consumer group.
+
+-> Python consumer groups examples are available in the `consumer/groups` folder:
+- `text_consumer_group.py`
+- `json_consumer_group.py`
+
 
 ---

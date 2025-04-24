@@ -8,7 +8,7 @@ producer = KafkaProducer(
 )
 
 for i in range(100):
-    record = {"id": i, "event": f"event-{i}"}
+    record = {"id": i+1, "event": f"event-{i+1}"}
     producer.send('json-topic', record)
     print(f"Sent !!")
     time.sleep(1)
